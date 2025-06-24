@@ -1,0 +1,32 @@
+name: Rust CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Set environment variables
+        run: echo "SESSION_COOKIE=${{ secrets.SESSION_COOKIE }}" >> $GITHUB_ENV
+
+      - name: Run Unit Tests
+        run: cargo test --verbose
+
+      - name: Run End-to-End Tests
+        run: cargo test --release --test e2e --verbose
